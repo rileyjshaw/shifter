@@ -29,7 +29,7 @@ uniform float u_gridLength;
 
 out vec4 fragColor;
 
-vec2 getOffsetDirection(vec2 xy) {
+int rand(vec2 xy) {
     int x = int(xy.x);
     int y = int(xy.y);
 
@@ -37,13 +37,13 @@ vec2 getOffsetDirection(vec2 xy) {
     int h = x * 374761393 + y * 668265263;
     h = (h ^ (h >> 13)) * 1274126177;
     h = h ^ (h >> 16);
+    return h;
+}
+
+vec2 getOffsetDirection(vec2 xy) {
+    int h = rand(xy);
     int dx = ((h >> 1) % 3) - 1; // -1, 0, or 1
     int dy = ((h >> 3) % 3) - 1; // -1, 0, or 1
-
-    // if(dx == 0 && dy == 0) {
-    //     dx = (x + y) % 2;
-    //     dy = 1 - dx;
-    // }
 
     return vec2(float(dx), float(dy));
 }
@@ -51,19 +51,20 @@ vec2 getOffsetDirection(vec2 xy) {
 void main() {
     vec2 uv = v_uv;
     vec2 gridXY = floor(uv * u_gridLength);
+    float frame = float(u_frame);
 
     vec2 mirroredUV = vec2(1.0 - uv.x, uv.y);
     vec4 webcamColor = texture(u_webcam, mirroredUV);
 
     ivec2 texSize = textureSize(u_history, 0).xy;
-    vec2 offsetDirection = getOffsetDirection(gridXY);
+    vec2 offsetDirection = getOffsetDirection(gridXY + floor(float(u_frame + rand(gridXY)) / 2345.6));
     vec2 pixelOffset = offsetDirection / float(texSize);
     vec2 offsetUV = mod(uv + pixelOffset, 1.0);
     vec4 historyColor = texture(u_history, vec3(offsetUV, 0.0));
 
     // If frame is 0 or offset direction is (0,0), use webcam color.
     float hasOffset = max(abs(offsetDirection.x), abs(offsetDirection.y));
-    fragColor = mix(webcamColor, historyColor, step(0.5, float(u_frame) * hasOffset));
+    fragColor = mix(webcamColor, historyColor, step(0.5, frame * hasOffset));
 }`;
 
 	const video = await getWebcamStream();

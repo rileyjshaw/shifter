@@ -64,7 +64,7 @@ void main() {
 
     // If frame is 0 or offset direction is (0,0), use webcam color.
     float hasOffset = max(abs(offsetDirection.x), abs(offsetDirection.y));
-    fragColor = mix(webcamColor, historyColor, step(0.5, frame * hasOffset));
+    fragColor = vec4(mix(webcamColor.rgb, historyColor.rgb, step(0.5, frame * hasOffset)), 1.0);
 }`;
 
 	const video = await getWebcamStream();
@@ -115,6 +115,8 @@ void main() {
 	shader.play(() => {
 		shader.updateTextures({ u_webcam: video });
 	});
+
+	shader.onResize = shader.reset;
 }
 
 document.addEventListener('DOMContentLoaded', main);

@@ -13,6 +13,6 @@
 		"vite": "^6.3.5"
 	},
 	"dependencies": {
-		"shaderpad": "^1.0.0-alpha.7"
+		"shaderpad": "^1.0.0-alpha.10"
 	}
 }

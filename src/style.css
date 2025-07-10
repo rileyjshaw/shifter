@@ -1,3 +1,26 @@
 body {
 	margin: 0;
 }
+
+#instructions {
+	position: fixed;
+	bottom: 2em;
+	text-align: center;
+	text-wrap: balance;
+	width: 100%;
+	opacity: 0;
+	animation: fadeIn 0.5s ease 0.5s forwards;
+}
+
+canvas {
+	background-color: #fff;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
